@@ -2,6 +2,7 @@ var http = require('http')
 var pj = require('post-json')
 var hq = require('hyperquest')
 var es = require('event-stream')
+var ecstatic = require('ecstatic')
 
 var storageHosts = 
   [ 'localhost:3010'
@@ -9,25 +10,16 @@ var storageHosts =
   , 'localhost:3012'
   ]
 
-var nUpdates = 0
-var lastUpdates = 0
-
-setInterval(function() {
-  // console.log(port, nUpdates, nUpdates - lastUpdates)
-  lastUpdates = nUpdates
-}, 1000)
-
 var server = http.createServer(function(req, res) {
+  if (req.url === '/') return viewer(req, res)
   if (req.url === '/event') return addEvent(req, res)
   if (req.url === '/pageviews') return getPageviews(req, res)
+  ecstatic({root: __dirname + '/public'})(req, res)
 })
 
-function getPageviews (req, res) {
-  var streams = storageHosts.map(function(host) {
-    return hq('http://'+host+'/pageviews').pipe(es.split())
-  })
-  var tr = es.through(function(data) { this.queue(data + '\n') })
-  var merged = es.merge.apply(this, streams).pipe(tr).pipe(res)
+function viewer (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'})
+  res.end('<html><body><script src="/main.js"></script></body></html>')
 }
 
 function addEvent (req, res) {
@@ -40,6 +32,14 @@ function addEvent (req, res) {
     forwardEvent(buffer)
     nUpdates += 1
   })
+}
+
+function getPageviews (req, res) {
+  var streams = storageHosts.map(function(host) {
+    return hq('http://'+host+'/pageviews').pipe(es.split())
+  })
+  var tr = es.through(function(data) { this.queue(data + '\n') })
+  var merged = es.merge.apply(this, streams).pipe(tr).pipe(res)
 }
 
 function forwardEvent (eventString) {

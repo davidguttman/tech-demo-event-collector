@@ -4,13 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cluster": "PORT=3000 node index.js & PORT=3001 node index.js & PORT=3002 node index.js"
+    "cluster": "PORT=3000 node index.js & PORT=3001 node index.js & PORT=3002 node index.js",
+    "watch-client": "watchify client/entry.js -o public/main.js -dv",
+    "dev": "npm run watch-client & node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "post-json": "^0.2.3",
     "hyperquest": "^0.2.0",
-    "event-stream": "^3.1.0"
+    "event-stream": "^3.1.0",
+    "ecstatic": "^0.4.13",
+    "moment": "^2.5.1"
+  },
+  "devDependencies": {
+    "browserify": "^3.30.2",
+    "watchify": "^0.6.1"
   }
 }
