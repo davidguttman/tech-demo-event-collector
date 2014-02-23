@@ -12,14 +12,19 @@ var server = http.createServer(function(req, res) {
   req.on('data', function(chunk) { buffer += chunk })
   
   req.on('end', function() {
-    forwardEvent(buffer)
     res.writeHead(200, {'Content-Type': 'text/plain'})
     res.end('OK')
+    forwardEvent(buffer)
   })
 })
 
 function forwardEvent (eventString) {
-  var event = JSON.parse(eventString)
+  try {
+    var event = JSON.parse(eventString)
+  } catch (err) {
+    return false
+  }
+  
   var n = toInt(event.pageviewId)
   var iHost = n % storageHosts.length
   var host = storageHosts[iHost]
@@ -36,6 +41,6 @@ server.listen(port)
 console.log('Collector running on port:', port)
 
 function toInt (str) {
-  var d = str.substring(str.length-1)
+  var d = str.substring(str.length-3)
   return parseInt(d, 16)
 }
