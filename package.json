@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cluster": "PORT=3000 node index.js & PORT=3001 node index.js & PORT=3002 node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "post-json": "^0.2.3"
+    "post-json": "^0.2.3",
+    "hyperquest": "^0.2.0",
+    "event-stream": "^3.1.0"
   }
 }
