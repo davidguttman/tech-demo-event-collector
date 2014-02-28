@@ -17,6 +17,11 @@ var server = http.createServer(function(req, res) {
   ecstatic({root: __dirname + '/public'})(req, res)
 })
 
+var port = process.env.PORT || 3000
+server.listen(port)
+
+console.log('Collector running on port:', port)
+
 function viewer (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'})
   res.end('<html><body><script src="/main.js"></script></body></html>')
@@ -30,7 +35,6 @@ function addEvent (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'})
     res.end('OK')
     forwardEvent(buffer)
-    nUpdates += 1
   })
 }
 
@@ -46,6 +50,7 @@ function forwardEvent (eventString) {
   try {
     var event = JSON.parse(eventString)
   } catch (err) {
+    if (err) {console.error(err)}
     return false
   }
   
@@ -58,11 +63,6 @@ function forwardEvent (eventString) {
     if (err) console.error(err)
   })
 }
-
-var port = process.env.PORT || 3000
-server.listen(port)
-
-console.log('Collector running on port:', port)
 
 function toInt (str) {
   var d = str.substring(str.length-3)

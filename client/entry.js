@@ -34,7 +34,6 @@ locationInfo.style.padding = 5 + 'px'
 locationInfo.style.zIndex = 200
 
 window.document.addEventListener('mousemove', function(evt) {
-  console.log('evt', evt);
   locationInfo.style.left = evt.clientX + 20 + 'px'
   locationInfo.style.top = evt.clientY + 20 + 'px'
   var durationVal = mapValue(evt.clientX, 0, window.innerWidth, 0, maxDuration)
